@@ -14,11 +14,11 @@ def main():
     data = conn.recv(1024).decode()
     path = data.split(" ")[1]
     if path == "/":
-        conn.sendall(b"HTTP/1.1 200 OK\r\n\r\n")
-    elif "/echo/" in path:
-        text = path.split("/")[2]
-        print(text)
-        conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
+        conn.sendall(b"HTTP/1.1 200\r\n\r\n")
+    elif "/user-agent" in path:
+        useragent=(data.split("\r\nUser-Agent: ")[1]).split("\r\n")[0]
+        print(useragent)
+        conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(useragent)}\r\n\r\n{useragent}\r\n".encode())
     else:
         conn.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
 
