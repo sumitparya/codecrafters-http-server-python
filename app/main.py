@@ -15,6 +15,9 @@ def main():
     path = data.split(" ")[1]
     if path == "/":
         conn.sendall(b"HTTP/1.1 200\r\n\r\n")
+    elif "/echo" in path:
+        text=path.split("/echo/")[1]
+        conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
     elif "/user-agent" in path:
         useragent=(data.split("\r\nUser-Agent: ")[1]).split("\r\n")[0]
         print(useragent)
