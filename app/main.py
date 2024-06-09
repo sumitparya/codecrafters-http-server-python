@@ -14,7 +14,7 @@ def main():
     data = conn.recv(1024).decode()
     path = data.split(" ")[1]
     if path == "/":
-        pass
+        conn.sendall(b"HTTP/1.1 200 OK\r\n\r\n")
     elif "/echo/" in path:
         text = path.split("/")[2]
         print(text)
