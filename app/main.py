@@ -26,7 +26,7 @@ def handle_client(conn):
             # Get the file path from the request and check if it exists
             file = f"/tmp/data/codecrafters.io/http-server-tester/{path.split("/files/")[1]}"
             file_size = os.path.getsize(file)
-            conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {file_size}\r\n\r\nHello,World!".encode())
+            conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {file_size}\r\n\r\n".encode())
         except FileNotFoundError:
             # Send a 404 Not Found response if the file does not exist
             conn.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
