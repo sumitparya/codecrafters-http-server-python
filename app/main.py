@@ -1,6 +1,7 @@
 import socket
 import threading
 import os
+import gzip
 
 
 def handle_client(conn):
@@ -21,7 +22,9 @@ def handle_client(conn):
             text = url.split("/echo/")[1]
             if "Accept-Encoding:" in data:
                 if "gzip" in (data.split("\r\nAccept-Encoding: ")[1]).split("\r\n")[0]:
-                    conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
+                    content = data.split("\r\n\r\n")[1]
+                    compressed_content = gzip.compress(content.encode('utf-8'))
+                    conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: {len(compressed_content)}\r\n\r\n{compressed_content}\r\n".encode())
                 else:
                     conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
             else:
