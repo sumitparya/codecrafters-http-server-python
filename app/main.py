@@ -1,6 +1,7 @@
 # Uncomment this to pass the first stage
 import socket
 import threading
+import os
 
 def handle_client(conn):
     data = conn.recv(1024).decode()
@@ -14,6 +15,13 @@ def handle_client(conn):
         useragent=(data.split("\r\nUser-Agent: ")[1]).split("\r\n")[0]
         print(useragent)
         conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(useragent)}\r\n\r\n{useragent}\r\n".encode())
+    elif "/files" in path:
+        try:
+            file = f"/tmp/{path.split("/files/")[1]}"
+            file_size = os.path.getsize(file)
+            conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {file_size}\r\n\r\nHello, World!\r\n".encode())
+        except FileNotFoundError:
+            conn.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
     else:
         conn.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
 
