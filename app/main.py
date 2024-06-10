@@ -21,6 +21,7 @@ def handle_client(conn):
             # Extract the text from the url and send it back as a response
             text = url.split("/echo/")[1]
             if "Accept-Encoding:" in data:
+                # Check if the client accepts gzip encoding and compress the text if it does
                 if "gzip" in (data.split("\r\nAccept-Encoding: ")[1]).split("\r\n")[0]:
                     compressed_content = gzip.compress(text.encode('utf-8'))
                     conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: {len(compressed_content)}\r\n\r\n".encode())
