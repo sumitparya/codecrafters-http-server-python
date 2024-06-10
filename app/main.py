@@ -1,16 +1,8 @@
 # Uncomment this to pass the first stage
 import socket
+import threading
 
-
-def main():
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    print("Logs from your program will appear here!")
-
-    # Uncomment this to pass the first stage
-    
-    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    conn, addr = server_socket.accept()
-    print("Received connection from", addr[0], "port", addr[1])
+def handle_client(conn):
     data = conn.recv(1024).decode()
     path = data.split(" ")[1]
     if path == "/":
@@ -24,6 +16,19 @@ def main():
         conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(useragent)}\r\n\r\n{useragent}\r\n".encode())
     else:
         conn.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
+
+def main():
+    # You can use print statements as follows for debugging, they'll be visible when running tests.
+    print("Logs from your program will appear here!")
+
+    # Uncomment this to pass the first stage
+    
+    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    
+    while True:
+        conn, addr = server_socket.accept()
+        client_handler = threading.Thread(target=handle_client, args=(conn))
+        client_handler.start()
 
 if __name__ == "__main__":
     main()
