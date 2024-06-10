@@ -19,7 +19,13 @@ def handle_client(conn):
         elif "/echo" in url:
             # Extract the text from the url and send it back as a response
             text = url.split("/echo/")[1]
-            conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
+            if "Accept-Encoding:" in data:
+                if ((data.split("\r\nAccept-Encoding: ")[1]).split("\r\n")[0] == "gzip"):
+                    conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
+                else:
+                    conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
+            else:
+                conn.sendall(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(text)}\r\n\r\n{text}\r\n".encode())
         elif "/user-agent" in url:
             # Extract the user agent from the request headers and send it back as a response
             useragent = (data.split("\r\nUser-Agent: ")[1]).split("\r\n")[0]
