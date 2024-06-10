@@ -24,11 +24,13 @@ def main():
     # Uncomment this to pass the first stage
     
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    server_address = ("localhost", 4221)
+    server_socket.bind(server_address)
+    server_socket.listen()
     
     while True:
         conn, addr = server_socket.accept()
-        client_handler = threading.Thread(target=handle_client, args=(conn))
-        client_handler.start()
+        threading.Thread(target=handle_client, args=(conn)).start()
 
 if __name__ == "__main__":
     main()
